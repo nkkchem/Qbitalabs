@@ -1,0 +1,277 @@
+# QBitaLabs Default Configuration
+# =================================
+# This file contains default settings for the QBita Fabric platform.
+# Override these settings in environment-specific files or local.yaml.
+
+project:
+  name: qbitalabs
+  version: "0.1.0"
+  description: "Quantum-Bio Swarm Intelligence for Preventive Health"
+
+# Core Settings
+core:
+  log_level: INFO
+  log_format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  cache_dir: ".cache"
+  data_dir: "data"
+
+# SWARM Agent Configuration
+swarm:
+  # Maximum number of concurrent agents
+  max_agents: 100
+
+  # Default coordination pattern
+  coordination_pattern: "hierarchical"  # Options: hierarchical, stigmergy, protein_swarm, ant_colony, particle_swarm
+
+  # Message bus configuration
+  message_bus:
+    type: "memory"  # Options: memory, redis
+    max_queue_size: 10000
+    message_ttl_seconds: 3600
+
+  # Agent defaults
+  agents:
+    default_timeout_seconds: 300
+    max_retries: 3
+    retry_delay_seconds: 5
+
+  # Pattern-specific settings
+  patterns:
+    protein_swarm:
+      binding_affinity_threshold: 0.7
+      folding_temperature: 0.5
+      complex_size_limit: 10
+
+    stigmergy:
+      pheromone_evaporation_rate: 0.1
+      pheromone_deposit_rate: 1.0
+      trail_persistence_seconds: 600
+
+    ant_colony:
+      num_ants: 50
+      alpha: 1.0  # Pheromone importance
+      beta: 2.0   # Heuristic importance
+
+    particle_swarm:
+      num_particles: 30
+      inertia_weight: 0.7
+      cognitive_weight: 1.5
+      social_weight: 1.5
+
+# Quantum Computing Configuration
+quantum:
+  # Default backend
+  default_backend: "simulator"
+
+  # Backend configurations
+  backends:
+    simulator:
+      num_qubits: 20
+      shots: 1000
+      noise_model: null
+
+    qiskit:
+      provider: "ibm_quantum"
+      backend_name: "ibm_brisbane"
+      shots: 4000
+      optimization_level: 3
+      # API key should be set via environment variable IBM_QUANTUM_API_KEY
+
+    pennylane:
+      device: "default.qubit"
+      shots: 1000
+      diff_method: "parameter-shift"
+
+    cirq:
+      device: "cirq.Simulator"
+      dtype: "complex128"
+
+    ionq:
+      backend: "simulator"
+      shots: 1000
+      # API key should be set via environment variable IONQ_API_KEY
+
+  # VQE settings
+  vqe:
+    ansatz: "uccsd"  # Options: uccsd, hardware_efficient
+    optimizer: "cobyla"  # Options: cobyla, adam, l-bfgs-b, spsa
+    max_iterations: 100
+    convergence_threshold: 1.0e-6
+
+  # QAOA settings
+  qaoa:
+    p_layers: 3
+    optimizer: "cobyla"
+    max_iterations: 100
+
+# Neuromorphic Computing Configuration
+neuromorphic:
+  default_backend: "simulator"
+
+  backends:
+    simulator:
+      num_neurons: 1000
+      timestep_ms: 1.0
+      neuron_model: "lif"  # Options: lif, alif, izhikevich
+
+    akida:
+      model_path: null
+      power_mode: "low"
+
+    loihi:
+      board: "ncl-ext-ghrd-01"
+      num_chips: 1
+
+    synsense:
+      device_type: "dynapcnn"
+
+  # SNN settings
+  snn:
+    default_neuron_model: "lif"
+    learning_rule: "stdp"  # Options: stdp, triplet_stdp
+    stdp:
+      tau_plus: 20.0  # ms
+      tau_minus: 20.0  # ms
+      a_plus: 0.01
+      a_minus: 0.01
+
+# Digital Twin Configuration
+digital_twin:
+  # Simulation settings
+  default_timestep_hours: 1.0
+  max_simulation_years: 100
+
+  # Available models
+  models:
+    metabolism:
+      enabled: true
+      include_glucose_insulin: true
+      include_lipids: true
+
+    cardiovascular:
+      enabled: true
+      include_blood_pressure: true
+      include_heart_rate: true
+
+    immune:
+      enabled: true
+      include_inflammation: true
+      include_immune_cells: true
+
+    gene_regulatory:
+      enabled: false
+      num_genes: 100
+
+  # Risk prediction
+  risk_prediction:
+    conditions:
+      - type2_diabetes
+      - cardiovascular_disease
+      - alzheimers
+      - cancer
+
+# Biology Module Configuration
+biology:
+  # Omics analysis
+  omics:
+    supported_types:
+      - genomics
+      - transcriptomics
+      - proteomics
+      - metabolomics
+    normalization_method: "quantile"
+
+  # Pathway analysis
+  pathways:
+    database: "kegg"  # Options: kegg, reactome, wikipathways
+    enrichment_method: "gsea"
+    significance_threshold: 0.05
+
+  # Aging analysis
+  aging:
+    clocks:
+      - horvath
+      - hannum
+      - phenoage
+      - grimage
+    hallmarks_assessment: true
+
+# Machine Learning Configuration
+ml:
+  # Model defaults
+  default_device: "cpu"  # Options: cpu, cuda, mps
+  batch_size: 32
+  learning_rate: 0.001
+  max_epochs: 100
+  early_stopping_patience: 10
+
+  # GNN settings
+  gnn:
+    hidden_channels: 128
+    num_layers: 3
+    dropout: 0.2
+
+  # Transformer settings
+  transformer:
+    d_model: 512
+    nhead: 8
+    num_layers: 6
+    dim_feedforward: 2048
+
+# API Configuration
+api:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+  cors_origins:
+    - "http://localhost:3000"
+    - "https://app.qbitalabs.com"
+
+  # Rate limiting
+  rate_limit:
+    requests_per_minute: 100
+    burst_size: 20
+
+  # Authentication
+  auth:
+    enabled: false
+    jwt_secret_key: null  # Set via environment variable JWT_SECRET_KEY
+    token_expire_minutes: 30
+
+# Logging Configuration
+logging:
+  version: 1
+  disable_existing_loggers: false
+
+  formatters:
+    standard:
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    detailed:
+      format: "%(asctime)s - %(name)s - %(levelname)s - %(module)s:%(lineno)d - %(message)s"
+
+  handlers:
+    console:
+      class: logging.StreamHandler
+      formatter: standard
+      level: INFO
+    file:
+      class: logging.handlers.RotatingFileHandler
+      filename: logs/qbitalabs.log
+      maxBytes: 10485760  # 10MB
+      backupCount: 5
+      formatter: detailed
+      level: DEBUG
+
+  loggers:
+    qbitalabs:
+      level: DEBUG
+      handlers: [console, file]
+      propagate: false
+
+# Monitoring Configuration
+monitoring:
+  enabled: false
+  metrics_port: 9090
+  tracing:
+    enabled: false
+    jaeger_endpoint: "http://localhost:14268/api/traces"

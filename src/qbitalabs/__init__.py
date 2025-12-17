@@ -37,6 +37,7 @@ if TYPE_CHECKING:
     from qbitalabs.quantum import QuantumBackend
     from qbitalabs.neuromorphic import NeuromorphicProcessor, SpikingNetwork
     from qbitalabs.digital_twin import PatientTwin, CohortTwin
+    from qbitalabs.workflows import DrugDiscoveryPipeline, DigitalTwinPipeline, WorkflowEngine
 
 
 def __getattr__(name: str):
@@ -62,6 +63,15 @@ def __getattr__(name: str):
     elif name == "CohortTwin":
         from qbitalabs.digital_twin import CohortTwin
         return CohortTwin
+    elif name == "DrugDiscoveryPipeline":
+        from qbitalabs.workflows import DrugDiscoveryPipeline
+        return DrugDiscoveryPipeline
+    elif name == "DigitalTwinPipeline":
+        from qbitalabs.workflows import DigitalTwinPipeline
+        return DigitalTwinPipeline
+    elif name == "WorkflowEngine":
+        from qbitalabs.workflows import WorkflowEngine
+        return WorkflowEngine
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
@@ -77,4 +87,7 @@ __all__ = [
     "SpikingNetwork",
     "PatientTwin",
     "CohortTwin",
+    "DrugDiscoveryPipeline",
+    "DigitalTwinPipeline",
+    "WorkflowEngine",
 ]
