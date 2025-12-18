@@ -1,0 +1,53 @@
+# QBitaLabs Development Configuration
+# =====================================
+# Overrides default.yaml for local development
+
+core:
+  log_level: DEBUG
+
+swarm:
+  max_agents: 20
+  message_bus:
+    type: "memory"
+
+quantum:
+  default_backend: "simulator"
+  backends:
+    simulator:
+      num_qubits: 10
+      shots: 100
+
+neuromorphic:
+  default_backend: "simulator"
+  backends:
+    simulator:
+      num_neurons: 100
+
+digital_twin:
+  default_timestep_hours: 24.0  # Faster simulation for testing
+
+ml:
+  default_device: "cpu"
+  batch_size: 8
+  max_epochs: 10
+
+api:
+  host: "127.0.0.1"
+  port: 8000
+  debug: true
+  cors_origins:
+    - "http://localhost:3000"
+    - "http://127.0.0.1:3000"
+  rate_limit:
+    requests_per_minute: 1000
+    burst_size: 100
+  auth:
+    enabled: false
+
+logging:
+  handlers:
+    console:
+      level: DEBUG
+
+monitoring:
+  enabled: false

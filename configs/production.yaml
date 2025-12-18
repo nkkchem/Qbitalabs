@@ -1,0 +1,100 @@
+# QBitaLabs Production Configuration
+# ====================================
+# Overrides default.yaml for production deployment
+
+core:
+  log_level: INFO
+  cache_dir: "/var/cache/qbitalabs"
+  data_dir: "/var/data/qbitalabs"
+
+swarm:
+  max_agents: 500
+  message_bus:
+    type: "redis"
+    redis_url: "${REDIS_URL}"
+    max_queue_size: 100000
+
+  agents:
+    default_timeout_seconds: 600
+    max_retries: 5
+
+quantum:
+  default_backend: "qiskit"
+  backends:
+    qiskit:
+      provider: "ibm_quantum"
+      backend_name: "ibm_brisbane"
+      shots: 8000
+      optimization_level: 3
+
+    pennylane:
+      device: "default.qubit"
+      shots: 4000
+
+    ionq:
+      backend: "qpu.harmony"
+      shots: 4000
+
+neuromorphic:
+  default_backend: "akida"
+  backends:
+    akida:
+      power_mode: "performance"
+
+digital_twin:
+  default_timestep_hours: 1.0
+  max_simulation_years: 100
+
+ml:
+  default_device: "cuda"
+  batch_size: 64
+  max_epochs: 200
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  debug: false
+  cors_origins:
+    - "https://app.qbitalabs.com"
+    - "https://api.qbitalabs.com"
+
+  rate_limit:
+    requests_per_minute: 100
+    burst_size: 20
+
+  auth:
+    enabled: true
+    jwt_secret_key: "${JWT_SECRET_KEY}"
+    token_expire_minutes: 60
+
+logging:
+  handlers:
+    console:
+      level: INFO
+    file:
+      filename: /var/log/qbitalabs/app.log
+      level: WARNING
+
+monitoring:
+  enabled: true
+  metrics_port: 9090
+  tracing:
+    enabled: true
+    jaeger_endpoint: "${JAEGER_ENDPOINT}"
+
+# Security settings
+security:
+  ssl_enabled: true
+  ssl_cert_path: "/etc/ssl/certs/qbitalabs.crt"
+  ssl_key_path: "/etc/ssl/private/qbitalabs.key"
+
+# Database (if using persistent storage)
+database:
+  url: "${DATABASE_URL}"
+  pool_size: 20
+  max_overflow: 10
+
+# Redis configuration
+redis:
+  url: "${REDIS_URL}"
+  max_connections: 50
