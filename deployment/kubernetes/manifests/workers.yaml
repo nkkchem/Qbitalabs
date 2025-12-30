@@ -1,0 +1,129 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: swarm-worker
+  namespace: qbitalabs
+  labels:
+    app: swarm-worker
+    component: worker
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: swarm-worker
+  template:
+    metadata:
+      labels:
+        app: swarm-worker
+        component: worker
+    spec:
+      serviceAccountName: qbitalabs-worker
+      containers:
+      - name: worker
+        image: qbitalabs/worker:latest
+        command: ["python", "-m", "qbitalabs.workers.swarm"]
+        env:
+        - name: WORKER_TYPE
+          value: "swarm"
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: qbitalabs-secrets
+              key: redis-url
+        - name: LOG_LEVEL
+          value: "INFO"
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quantum-worker
+  namespace: qbitalabs
+  labels:
+    app: quantum-worker
+    component: worker
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: quantum-worker
+  template:
+    metadata:
+      labels:
+        app: quantum-worker
+        component: worker
+    spec:
+      serviceAccountName: qbitalabs-worker
+      containers:
+      - name: worker
+        image: qbitalabs/worker:latest
+        command: ["python", "-m", "qbitalabs.workers.quantum"]
+        env:
+        - name: WORKER_TYPE
+          value: "quantum"
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: qbitalabs-secrets
+              key: redis-url
+        - name: QUANTUM_BACKEND
+          value: "simulator"
+        resources:
+          requests:
+            cpu: 1000m
+            memory: 2Gi
+          limits:
+            cpu: 4000m
+            memory: 8Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: neuromorphic-worker
+  namespace: qbitalabs
+  labels:
+    app: neuromorphic-worker
+    component: worker
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: neuromorphic-worker
+  template:
+    metadata:
+      labels:
+        app: neuromorphic-worker
+        component: worker
+    spec:
+      serviceAccountName: qbitalabs-worker
+      containers:
+      - name: worker
+        image: qbitalabs/worker:latest
+        command: ["python", "-m", "qbitalabs.workers.neuromorphic"]
+        env:
+        - name: WORKER_TYPE
+          value: "neuromorphic"
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: qbitalabs-secrets
+              key: redis-url
+        resources:
+          requests:
+            cpu: 500m
+            memory: 1Gi
+          limits:
+            cpu: 2000m
+            memory: 4Gi
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: qbitalabs-worker
+  namespace: qbitalabs

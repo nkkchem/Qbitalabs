@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: qbitalabs
+  labels:
+    app.kubernetes.io/name: qbitalabs
+    app.kubernetes.io/part-of: qbita-fabric
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: qbitalabs-quota
+  namespace: qbitalabs
+spec:
+  hard:
+    requests.cpu: "20"
+    requests.memory: 40Gi
+    limits.cpu: "40"
+    limits.memory: 80Gi
+    persistentvolumeclaims: "10"
+---
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: qbitalabs-limits
+  namespace: qbitalabs
+spec:
+  limits:
+  - default:
+      cpu: "1"
+      memory: 1Gi
+    defaultRequest:
+      cpu: 100m
+      memory: 256Mi
+    type: Container
