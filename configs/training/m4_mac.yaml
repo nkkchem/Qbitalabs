@@ -1,0 +1,142 @@
+# QBitaLabs M4 Mac Training Configuration
+# Optimized for Apple Silicon (M4 Max/Ultra with 128GB RAM)
+
+# Hardware Configuration
+hardware:
+  device: "mps"  # Metal Performance Shaders
+  use_neural_engine: true
+  memory_limit_gb: 100  # Leave 28GB for system
+  num_threads: 14  # M4 Max has 14 CPU cores
+
+# MPS Optimization
+mps:
+  enable_mps_fallback: true
+  memory_fraction: 0.8
+  high_watermark_ratio: 0.9
+
+# Training Configuration
+training:
+  batch_size: 64  # Optimized for 128GB unified memory
+  gradient_accumulation_steps: 4
+  effective_batch_size: 256
+  mixed_precision: true
+  precision: "float16"
+
+  # Learning Rate Schedule
+  learning_rate: 1.0e-4
+  lr_scheduler: "cosine_with_warmup"
+  warmup_steps: 500
+  weight_decay: 0.01
+
+  # Training Duration
+  max_epochs: 100
+  early_stopping_patience: 10
+  checkpoint_every_n_epochs: 5
+
+  # Gradient Clipping
+  max_grad_norm: 1.0
+
+# Model Configurations
+models:
+  # Molecular Property Prediction
+  molecular_gnn:
+    hidden_dim: 256
+    num_layers: 6
+    dropout: 0.1
+    activation: "gelu"
+    pooling: "attention"
+
+  # Drug-Target Interaction
+  dti_model:
+    drug_encoder: "gnn"
+    target_encoder: "transformer"
+    fusion: "bilinear_attention"
+    hidden_dim: 512
+
+  # Binding Affinity Prediction
+  binding_model:
+    architecture: "3d_cnn_transformer"
+    atom_features: 64
+    residue_features: 128
+    interaction_heads: 8
+
+  # Patient Digital Twin
+  digital_twin:
+    temporal_encoder: "lstm"
+    hidden_dim: 256
+    num_layers: 4
+    prediction_horizon: 30  # days
+
+# Data Loading
+dataloader:
+  num_workers: 8  # Half of CPU cores
+  pin_memory: false  # Not needed with unified memory
+  prefetch_factor: 4
+  persistent_workers: true
+
+# Experiment Tracking
+tracking:
+  backend: "local"  # mlflow, wandb, or local
+  experiment_name: "qbitalabs_mvp"
+  log_every_n_steps: 10
+  save_code: true
+
+# Metrics to Track
+metrics:
+  regression:
+    - "mse"
+    - "mae"
+    - "r2"
+    - "pearson"
+    - "spearman"
+  classification:
+    - "accuracy"
+    - "auroc"
+    - "auprc"
+    - "f1"
+
+# MVP Success Criteria
+success_criteria:
+  binding_prediction:
+    pearson_correlation: 0.85
+    rmse: 1.2  # pKi units
+  property_prediction:
+    auroc: 0.90
+  dti_classification:
+    auroc: 0.92
+
+# Quantum Hybrid Settings
+quantum:
+  enable_quantum: false  # Start classical, add quantum later
+  backend: "aer_simulator"
+  num_qubits: 8
+  shots: 1000
+
+# Paths
+paths:
+  data_dir: "./mvp/data"
+  model_dir: "./mvp/models"
+  log_dir: "./mvp/logs"
+  checkpoint_dir: "./mvp/checkpoints"
+  report_dir: "./mvp/reports"
+
+# Reproducibility
+seed: 42
+deterministic: true
+
+# Resource Monitoring
+monitoring:
+  log_memory_usage: true
+  log_gpu_utilization: true
+  profile_first_n_steps: 100
+
+# M4 Specific Optimizations
+m4_optimizations:
+  # Use Accelerate framework
+  use_accelerate: true
+  # Enable Metal 3 features
+  metal3_raytracing: false
+  # Mesh shaders for parallel processing
+  mesh_shaders: true
+  # Memory bandwidth optimization
+  texture_compression: true
